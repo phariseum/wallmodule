@@ -32,7 +32,7 @@ unsigned char shortCircuitRetryCount = 0;
 bool setDefaultValueForTim2 = false;
 bool dimmerIsRunning = false;
 bool detectionPhaseInProgress = true;
-
+unsigned char direction = 1;
 
 unsigned char currentDimmingTableDescHi[22];
 unsigned char currentDimmingTableDescLo[22];
@@ -379,7 +379,7 @@ void DIM_Process()
 {
 	DIM_FrequencyDetection();
 	/* Set here the desired dimmer angle */
-	dimmerAngle = 8;
+
 	/* Implement some logic so that the relay shorts the dimmer for intensities > 80% */
 }
 
@@ -473,6 +473,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 		avgCycleCount++;
 		risingEdgeDetectionFlag = true;
 		// checkInputs();
+
+		(direction == 1)? dimmerAngle++ : dimmerAngle--;
+
+		if (dimmerAngle == 0) direction = 1;
+		if (dimmerAngle > 19) direction = 0;
 
 		/* Temporary replacement for check inputs */
 		if (dimmerIsRunning == false && detectionPhaseInProgress == false)
